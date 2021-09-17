@@ -168,7 +168,7 @@ namespace Final.Controller {
             var tmpV2 = Path.Last().Norm;
 
             // See https://en.wikipedia.org/wiki/Rotation_matrix#Rotation_matrix_from_axis_and_angle
-            double a = angle * 3.14159 / 180.0;
+            double a = angle * Math.PI / 180.0;
             foreach (var p in Path) {
                 Vector3 n = (p.v1 - p.v2).Normalized();
                 Matrix3 rotate = new Matrix3(
@@ -186,7 +186,7 @@ namespace Final.Controller {
             }
             Path.Insert(0, new MyLine(Path.First().v1 + tmpV1 * 50, Path.First().v1, Path.First().Norm));
             Path.Add(new MyLine(Path.Last().v2, Path.Last().v2 + tmpV2 * 50, Path.Last().Norm));
-            Path.Add(new MyLine(Path.Last().v2, Path.Last().v2, Path.Last().Norm));
+            Path.Add(new MyLine(Path.Last().v2, Path.Last().v2 + tmpV2 * 50, Path.Last().Norm));
 
             return Path.ToArray();
         }
@@ -195,7 +195,8 @@ namespace Final.Controller {
             var source = new BindingSource();
             if (Path != null)
                 foreach (var p in Path) {
-                    source.Add(new XYZABC(p.v1, p.Norm));
+                    if ((p.v1 - p.v2).Length >= 3)
+                        source.Add(new XYZABC(p.v1, p.Norm));
                     //source.Add(new XYZWPR((p.v1 + p.v2) / 2, p.Norm)); //interpolation
                     //source.Add(new XYZWPR(p.v2, p.Norm));
                 }

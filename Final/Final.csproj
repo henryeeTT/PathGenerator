@@ -74,7 +74,6 @@
   <ItemGroup>
     <Compile Include="Controller\ExportTool.cs" />
     <Compile Include="Controller\STLPathController.cs" />
-    <Compile Include="Controller\XYZWPRViewController.cs" />
     <Compile Include="Model\DbscanAlgorithm.cs" />
     <Compile Include="Model\GlList.cs" />
     <Compile Include="View\TMListen.cs">

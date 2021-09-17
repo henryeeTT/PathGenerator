@@ -16,7 +16,7 @@ namespace Final.View {
 
             Workpiece = new STLPathController((int)GlList.Workpiece, (int)GlList.Path);
             Workpiece.ReadASCIIFile(@"C:\Users\henry.tsai\Desktop\公司\完成\DemoRoom\demo2\demo.stl");
-            Workpiece.SetOriginalPosition(0, 0, 0, 0, 0, -5);
+            Workpiece.SetOriginalPosition();
             Workpiece.MakeOriginalList();
             btnStatusHandler();
         }
@@ -76,6 +76,7 @@ namespace Final.View {
                 Workpiece.MeshGrouping(float.Parse(value) / 180 * (float)Math.PI, 1);
                 Workpiece.MakeSortedList();
                 isSorted = true;
+                toolStripStatusLabel.Text = "Finished";
 
                 sw.Stop();
                 MessageBox.Show("Time Spent : " + sw.Elapsed.TotalSeconds.ToString("f2") + " sec");
@@ -84,7 +85,7 @@ namespace Final.View {
         }
 
         private void btnSetRT_Click (object sender, EventArgs e) {
-            new SetPositionBox(Workpiece).ShowDialog();
+            new SetPositionBox(Workpiece).Show();
         }
 
         private void btnPath_Click (object sender, EventArgs e) {

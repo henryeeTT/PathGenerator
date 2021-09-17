@@ -19,7 +19,9 @@ namespace Final.Controller {
         public List<MeshGroup> _Meshgroup = new List<MeshGroup>();
         public HashSet<MyLine> Edge = new HashSet<MyLine>();
         public HashSet<MyLine> _Edge = new HashSet<MyLine>();
-        public float[] RnT = new float[6]; //Rotate angle x, y, z, translate distance x, y, z.
+        public Vector3 Position { get; set; } = new Vector3(0, 0, -5);
+        public Quaternion Rotation { get; set; } = new Quaternion(0,0,0,1);
+
 
         public STLController (int listName) {
             ListNum = listName;
@@ -206,29 +208,26 @@ namespace Final.Controller {
             return true;
         }
 
-        public void SetOriginalPosition (float ax, float ay, float az, float tx, float ty, float tz) {
-            RnT = new float[6] { ax, ay, az, tx, ty, tz };
+        public void SetOriginalPosition () {
             var tmp = new List<TriMesh>();
             foreach (var x in _STLdata) {
-                var v1 = Transform(x.v1, ax, ay, az, tx, ty, tz);
-                var v2 = Transform(x.v2, ax, ay, az, tx, ty, tz);
-                var v3 = Transform(x.v3, ax, ay, az, tx, ty, tz);
-                var n = Transform(x.norm, ax, ay, az, 0, 0, 0);
+                var v1 = Transform(x.v1, Position, Rotation);
+                var v2 = Transform(x.v2, Position, Rotation);
+                var v3 = Transform(x.v3, Position, Rotation);
+                var n = Transform(x.norm, Vector3.Zero, Rotation);
                 tmp.Add(new TriMesh(n, v1, v2, v3));
             }
             STLdata = tmp.ToArray();
         }
 
-        public void SetSortedPosition (float ax, float ay, float az, float tx, float ty, float tz) {
-            RnT = new float[6] { ax, ay, az, tx, ty, tz };
-            
+        public void SetSortedPosition () {
             for (int i = 0; i < _Meshgroup.Count(); i++) {
                 var tmp = new List<TriMesh>();
                 foreach (var x in _Meshgroup[i].meshes) {
-                    var v1 = Transform(x.v1, ax, ay, az, tx, ty, tz);
-                    var v2 = Transform(x.v2, ax, ay, az, tx, ty, tz);
-                    var v3 = Transform(x.v3, ax, ay, az, tx, ty, tz);
-                    var n = Transform(x.norm, ax, ay, az, 0, 0, 0);
+                    var v1 = Transform(x.v1, Position, Rotation);
+                    var v2 = Transform(x.v2, Position, Rotation);
+                    var v3 = Transform(x.v3, Position, Rotation);
+                    var n = Transform(x.norm, Vector3.Zero, Rotation);
                     tmp.Add(new TriMesh(n, v1, v2, v3));
                 }
                 Meshgroup[i].meshes = tmp.ToArray();
@@ -236,26 +235,21 @@ namespace Final.Controller {
 
             Edge = _Edge.Select(p => new MyLine(p.v1, p.v2)).ToHashSet(); // Restore bcackup
             foreach (var x in Edge) {
-                x.v1 = Transform(x.v1, ax, ay, az, tx, ty, tz);
-                x.v2 = Transform(x.v2, ax, ay, az, tx, ty, tz);
+                x.v1 = Transform(x.v1, Position, Rotation);
+                x.v2 = Transform(x.v2, Position, Rotation);
             }
         }
 
-        private Vector3 Transform (Vector3 vector, float ax, float ay, float az, float tx, float ty, float tz) {
-            var v = new Vector4(vector) { W = 1 };
-            Matrix4 rx = Matrix4.CreateRotationX(ax);
-            Matrix4 ry = Matrix4.CreateRotationY(ay);
-            Matrix4 rz = Matrix4.CreateRotationZ(az);
-            Matrix4 t = Matrix4.CreateTranslation(tx, ty, tz);
-            var R = t * rx * ry * rz;
-            vector.X = Vector4.Dot(v, R.Column0);
-            vector.Y = Vector4.Dot(v, R.Column1);
-            vector.Z = Vector4.Dot(v, R.Column2);
+        private Vector3 Transform (Vector3 vector, Vector3 Position, Quaternion Rotation) {
+            var q = Rotation * new Quaternion(vector, 0) * Rotation.Inverted();
+            vector = -q.Xyz;
+            vector += Position;
             return vector;
         }
 
         public void MeshGrouping (float eps, int minpts) {
-            RnT = new float[6];
+            Position = Vector3.Zero;
+            Rotation = new Quaternion(0, 0, 0, 1);
             Meshgroup.Clear();
             _Meshgroup.Clear();
             Edge.Clear();

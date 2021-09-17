@@ -1,6 +1,7 @@
 ﻿using Final.Model;
 using System;
 using System.Drawing;
+using OpenTK;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Tao.OpenGl;
@@ -8,11 +9,12 @@ using Tao.OpenGl;
 namespace Final.View {
     class OpenGLPanel : Panel {
         public Action<int, int> SelectEvent;
-
+        Vector3 cmrCenter = new Vector3(0, 0, 0);
+        Vector3 cmrX = new Vector3(-1, 0, 0);
+        Vector3 cmrY = new Vector3(0, 1, 0);
+        Vector3 cmrZ = new Vector3(0, 0, -1);
         IntPtr hdc, hrc;
-        Point Rotate = new Point();
         Point CurrentRotate = new Point();
-        Point Translate = new Point();
         Point CurrentTranslate = new Point();
         double scale = 2;
         int Mouse_sensitive = 2;
@@ -31,17 +33,23 @@ namespace Final.View {
             Gl.glClear(Gl.GL_COLOR_BUFFER_BIT | Gl.GL_DEPTH_BUFFER_BIT);
             Gl.glLoadIdentity();
             Gl.glOrtho(-Width / 2, Width / 2, -Height / 2, Height / 2, -10000, 10000);
+            //Glu.gluPerspective(30,1, 1, 10000);
+            SetCameraPosition();
+
+            //Gl.glFlush();
+            //Gl.glClear(Gl.GL_COLOR_BUFFER_BIT | Gl.GL_DEPTH_BUFFER_BIT);
+            //Gl.glLoadIdentity();
+            //Gl.glOrtho(-Width / 2, Width / 2, -Height / 2, Height / 2, -10000, 10000);
             Gl.glScaled(scale, scale, scale);
-            Gl.glTranslatef(Translate.X, Translate.Y, 0);
-            //Gl.glRotatef(-90, 0, 0, 1);
-            Gl.glRotatef(Rotate.Y, -1, 0, 0);
-            Gl.glRotatef(Rotate.X, 0, 1, 0);
+            //Gl.glTranslatef(Translate.X, Translate.Y, 0);
+            //Gl.glRotatef(Rotate.Y, -1, 0, 0);
+            //Gl.glRotatef(Rotate.X, 0, 1, 0);
             #endregion
 
             #region Axis
             Gl.glColor3f(1, 1, 1);
             //Glu.gluSphere(Glu.gluNewQuadric(), 3, 36, 36);
-            Gl.glLineWidth(1);
+            Gl.glLineWidth(3);
             Gl.glBegin(Gl.GL_LINES);
             Gl.glColor3f(1, 0, 0);
             Gl.glVertex3f(20, 0, 0);
@@ -76,6 +84,13 @@ namespace Final.View {
             SwapBuffers(hdc);
         }
 
+        public void SetCameraPosition () {
+            var cmrZ = Vector3.Cross(cmrX, cmrY);
+            var cmrPosition = cmrCenter - 200 * cmrZ;
+            var up = Vector3.Cross(cmrZ, cmrX).Normalized();
+            Glu.gluLookAt(cmrPosition.X, cmrPosition.Y, cmrPosition.Z, cmrCenter.X, cmrCenter.Y, cmrCenter.Z, up.X, up.Y, up.Z);
+        }
+
         private void OpenGLPanel_SizeChanged (object sender, EventArgs e) {
             Gl.glViewport(0, 0, Width, Height);
         }
@@ -87,13 +102,16 @@ namespace Final.View {
                 case MouseButtons.None:
                     break;
                 case MouseButtons.Right:
-                    Rotate.X -= ((CurrentRotate.X - e.X) / Mouse_sensitive) / 2;
-                    Rotate.Y += ((CurrentRotate.Y - e.Y) / Mouse_sensitive) / 2;
+                    var x = Matrix4.CreateFromAxisAngle(cmrY, (CurrentRotate.X - e.X) / 200f);
+                    var y = Matrix4.CreateFromAxisAngle(cmrX, -(CurrentRotate.Y - e.Y) / 200f);
+                    cmrY = Vector3.Transform(cmrY, y);
+                    cmrX = Vector3.Transform(cmrX, x);
+                    //cmrZ = Vector3.Transform(cmrZ, z);
                     CurrentRotate = e.Location;
                     break;
                 case MouseButtons.Middle:
-                    Translate.X -= (CurrentTranslate.X - e.X) / Mouse_sensitive;
-                    Translate.Y += (CurrentTranslate.Y - e.Y) / Mouse_sensitive;
+                    cmrCenter -= cmrX * ((CurrentTranslate.X - e.X) / Mouse_sensitive);
+                    cmrCenter -= cmrY * ((CurrentTranslate.Y - e.Y) / Mouse_sensitive);
                     CurrentTranslate = e.Location;
                     break;
                 case MouseButtons.XButton1:
@@ -114,6 +132,9 @@ namespace Final.View {
                 if (scale < 0.1)
                     scale = 0.11;
             }
+
+            //cmrCenter += cmrZ * e.Delta / 3;
+
         }
 
         private void OpenGLPanel_MouseDown (object sender, MouseEventArgs e) {

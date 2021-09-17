@@ -23,6 +23,10 @@ namespace Final.View {
             InitializeComponent();
         }
 
+        public void UpdateUI () {
+            label3.Text += Source.Count.ToString();
+        }
+
         private async void btn_connect_Click (object sender, EventArgs e) {
             try {
                 client = new TcpClient();
@@ -31,6 +35,13 @@ namespace Final.View {
                 await Task.WhenAny(client.ConnectAsync(txt_ip.Text, int.Parse(txt_port.Text)), Task.Delay(3000));
                 stream = client.GetStream();
                 btn_connect.BackColor = Color.Green;
+                btn_connect.Enabled = false;
+                await Task.Run(() => {
+                    while (client.Connected)
+                        Task.Delay(1000);
+                });
+                btn_connect.BackColor = Color.Red;
+                client.Close();
             }
             catch (Exception ex) {
                 btn_connect.BackColor = Color.Red;
@@ -56,7 +67,7 @@ namespace Final.View {
                 "ChangeBase(\"yy\")\r\n" +
                 "ChangeTCP(\"pin2\")\r\n";
             foreach (var p in Source)
-                //    s += $"PTP(\"CPP\",{p.X.ToString("f3")},{p.Y.ToString("f3")},{p.Z.ToString("f3")},{p.W.ToString("f3")},{p.P.ToString("f3")},{p.R.ToString("f3")},10,150,30,true)" + "\r\n";
+                //    s += $"PTP(\"CPP\",{p.X.ToString("f3")},{p.Y.ToString("f3")},{p.Z.ToString("f3")},{p.A.ToString("f3")},{p.B.ToString("f3")},{p.C.ToString("f3")},10,150,30,true)" + "\r\n";
                 s += $"PLine(\"CAP\",{p.X.ToString("f3")},{p.Y.ToString("f3")},{p.Z.ToString("f3")},{p.A.ToString("f3")},{p.B.ToString("f3")},{p.C.ToString("f3")},100,150,30)" + "\r\n";
             s = s.Remove(s.Length - 2, 2);
             s = s.Insert(0, $"TMSCT,{s.Length},");

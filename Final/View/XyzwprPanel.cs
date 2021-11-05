@@ -47,8 +47,9 @@ namespace Final.View {
             List<XYZABC> tmp = new List<XYZABC>();
             foreach (var p in Sources)
                 tmp.AddRange(p);
-            ExportTool ET = new ExportTool(tmp);
-            ET.ExportTM();
+            //ExportTool ET = new ExportTool(tmp);
+            //ET.ExportTM();
+            new TMPathView(tmp).Show();
         }
 
         private void CboPath_SelectedIndexChanged (object sender, EventArgs e) {

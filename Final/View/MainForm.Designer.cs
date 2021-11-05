@@ -34,12 +34,13 @@ namespace Final.View {
             this.toolStrip_Select = new System.Windows.Forms.ToolStripButton();
             this.toolStrip_Path = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.toolStripLine = new System.Windows.Forms.ToolStripButton();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.GLView = new Final.View.OpenGLPanel();
             this.xyzwprPanel = new Final.View.XyzwprPanel();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -122,6 +123,7 @@ namespace Final.View {
             this.toolStrip_SetRT,
             this.toolStrip_MeshGrouping,
             this.toolStrip_Select,
+            this.toolStripLine,
             this.toolStrip_Path,
             this.toolStripReset});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
@@ -129,6 +131,16 @@ namespace Final.View {
             this.toolStrip1.Size = new System.Drawing.Size(1064, 37);
             this.toolStrip1.TabIndex = 2;
             this.toolStrip1.Text = "toolStrip1";
+            // 
+            // toolStripLine
+            // 
+            this.toolStripLine.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripLine.Image = ((System.Drawing.Image)(resources.GetObject("toolStripLine.Image")));
+            this.toolStripLine.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripLine.Name = "toolStripLine";
+            this.toolStripLine.Size = new System.Drawing.Size(34, 34);
+            this.toolStripLine.Text = "toolStripButton1";
+            this.toolStripLine.Click += new System.EventHandler(this.btnLine_Click);
             // 
             // timer1
             // 
@@ -156,6 +168,22 @@ namespace Final.View {
             this.splitContainer1.SplitterDistance = 760;
             this.splitContainer1.TabIndex = 3;
             // 
+            // GLView
+            // 
+            this.GLView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.GLView.Location = new System.Drawing.Point(0, 0);
+            this.GLView.Name = "GLView";
+            this.GLView.Size = new System.Drawing.Size(760, 622);
+            this.GLView.TabIndex = 0;
+            // 
+            // xyzwprPanel
+            // 
+            this.xyzwprPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.xyzwprPanel.Location = new System.Drawing.Point(0, 0);
+            this.xyzwprPanel.Name = "xyzwprPanel";
+            this.xyzwprPanel.Size = new System.Drawing.Size(300, 622);
+            this.xyzwprPanel.TabIndex = 0;
+            // 
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -174,22 +202,6 @@ namespace Final.View {
             this.toolStripStatusLabel.Spring = true;
             this.toolStripStatusLabel.Text = "Status";
             this.toolStripStatusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // GLView
-            // 
-            this.GLView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.GLView.Location = new System.Drawing.Point(0, 0);
-            this.GLView.Name = "GLView";
-            this.GLView.Size = new System.Drawing.Size(760, 622);
-            this.GLView.TabIndex = 0;
-            // 
-            // xyzwprPanel
-            // 
-            this.xyzwprPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.xyzwprPanel.Location = new System.Drawing.Point(0, 0);
-            this.xyzwprPanel.Name = "xyzwprPanel";
-            this.xyzwprPanel.Size = new System.Drawing.Size(300, 622);
-            this.xyzwprPanel.TabIndex = 0;
             // 
             // MainForm
             // 
@@ -229,6 +241,7 @@ namespace Final.View {
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel;
         private XyzwprPanel xyzwprPanel;
+        private System.Windows.Forms.ToolStripButton toolStripLine;
     }
 }
 

@@ -8,14 +8,14 @@ using OpenTK;
 namespace Final.View {
     public partial class MainForm : Form {
         STLPathController Workpiece;
-        bool SelectMode, isSorted;
+        bool SelectMode, LineMode, isSorted;
 
         public MainForm () {
             InitializeComponent();
             GLView.SelectEvent = SelectEvent;
-
             Workpiece = new STLPathController((int)GlList.Workpiece, (int)GlList.Path);
             Workpiece.ReadASCIIFile(@"C:\Users\henry.tsai\Desktop\公司\完成\DemoRoom\demo2\demo.stl");
+            //Workpiece.ReadBinaryFile("487.stl");
             Workpiece.SetOriginalPosition();
             Workpiece.MakeOriginalList();
             btnStatusHandler();
@@ -31,6 +31,18 @@ namespace Final.View {
                 Gl.glEnable(Gl.GL_LIGHTING);
                 Workpiece.MakeSortedList();
                 Workpiece.MakeUnsortPathList(color);
+                GLView.Render();
+                GLView.SwapBuffer();
+            }
+            if (LineMode == true) {
+                byte[] color = new byte[3];
+                Gl.glDisable(Gl.GL_LIGHTING);
+                Workpiece.MakeColorList();
+                Workpiece.ClearPathList();
+                GLView.Render();
+                Workpiece.MakeLineList(x, GLView.Height - y);
+                Gl.glEnable(Gl.GL_LIGHTING);
+                Workpiece.MakeSortedList();
                 GLView.Render();
                 GLView.SwapBuffer();
             }
@@ -62,6 +74,7 @@ namespace Final.View {
 
         private void btnSelect_Click (object sender, EventArgs e) {
             SelectMode = !SelectMode;
+            LineMode = !LineMode;
             btnStatusHandler();
         }
 
@@ -90,33 +103,52 @@ namespace Final.View {
 
         private void btnPath_Click (object sender, EventArgs e) {
             string value = "0";
+            if(SelectMode)
             if (Dialog.InputBox("Set rotate angle", "Angle in degree:", ref value) == DialogResult.OK) {
                 Workpiece.MakePathList(float.Parse(value));
                 xyzwprPanel.RefreshSource(Workpiece.MakeBindingSource());
             }
+            if (LineMode) {
+                xyzwprPanel.RefreshSource(Workpiece.MakeLineBindingSource());
+            }
+        }
+
+        private void btnLine_Click (object sender, EventArgs e) {
+            SelectMode = !SelectMode;
+            LineMode = !LineMode;
+            btnStatusHandler();
         }
 
         private void btnStatusHandler () {
             if (isSorted) {
-                toolStrip_Select.Enabled = true;
-                toolStrip_Path.Enabled = true;
                 toolStripStatusLabel.Text = "Finish";
+                toolStrip_Path.Enabled = true;
+                if (!SelectMode) {
+                    SelectMode = false;
+                    LineMode = true;
+                    toolStrip_Select.Checked = false;
+                    toolStripLine.Checked = true;
+                    toolStrip_Select.Enabled = false;
+                    toolStripLine.Enabled = true;
+                    toolStripStatusLabel.Text = "LineMode";
+                }
+                else {
+                    SelectMode = true;
+                    LineMode = false;
+                    toolStrip_Select.Checked = true;
+                    toolStripLine.Checked = false;
+                    toolStrip_Select.Enabled = true;
+                    toolStripLine.Enabled = false;
+                    toolStripStatusLabel.Text = "Select mode";
+                }
             }
             else {
                 toolStrip_Select.Enabled = false;
+                toolStripLine.Enabled = false;
                 toolStrip_Path.Enabled = false;
                 toolStripStatusLabel.Text = "";
             }
-            if (!SelectMode) {
-                SelectMode = false;
-                toolStrip_Select.Checked = false;
-                toolStripStatusLabel.Text = "Idle";
-            }
-            else {
-                SelectMode = true;
-                toolStrip_Select.Checked = true;
-                toolStripStatusLabel.Text = "Select mode";
-            }
+
         }
     }
 }

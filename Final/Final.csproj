@@ -76,6 +76,13 @@
     <Compile Include="Controller\STLPathController.cs" />
     <Compile Include="Model\DbscanAlgorithm.cs" />
     <Compile Include="Model\GlList.cs" />
+    <Compile Include="Model\TMpath.cs" />
+    <Compile Include="View\TMPathView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\TMPathView.Designer.cs">
+      <DependentUpon>TMPathView.cs</DependentUpon>
+    </Compile>
     <Compile Include="View\TMListen.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -128,6 +135,9 @@
     </Compile>
     <EmbeddedResource Include="View\TMListen.resx">
       <DependentUpon>TMListen.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\TMPathView.resx">
+      <DependentUpon>TMPathView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="View\XyzwprPanel.resx">
       <DependentUpon>XyzwprPanel.cs</DependentUpon>

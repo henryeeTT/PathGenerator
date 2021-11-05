@@ -233,17 +233,17 @@ namespace Final.Controller {
                 Meshgroup[i].meshes = tmp.ToArray();
             }
 
-            Edge = _Edge.Select(p => new MyLine(p.v1, p.v2)).ToHashSet(); // Restore bcackup
+            Edge = _Edge.Select(p => new MyLine(p.Start, p.End)).ToHashSet(); // Restore bcackup
             foreach (var x in Edge) {
-                x.v1 = Transform(x.v1, Position, Rotation);
-                x.v2 = Transform(x.v2, Position, Rotation);
+                x.Start = Transform(x.Start, Position, Rotation);
+                x.End = Transform(x.End, Position, Rotation);
             }
         }
 
         private Vector3 Transform (Vector3 vector, Vector3 Position, Quaternion Rotation) {
-            var q = Rotation * new Quaternion(vector, 0) * Rotation.Inverted();
-            vector = -q.Xyz;
             vector += Position;
+            var q = Rotation * new Quaternion(vector, 0) * Quaternion.Invert(Rotation);
+            vector = q.Xyz;
             return vector;
         }
 
@@ -326,7 +326,7 @@ namespace Final.Controller {
                                         AllLineWithoutEdge.Add(va);
                                 }
             Edge = AllLine.Except(AllLineWithoutEdge).ToHashSet();
-            _Edge = Edge.Select(p => new MyLine(p.v1, p.v2)).ToHashSet(); // Make a deep copy
+            _Edge = Edge.Select(p => new MyLine(p.Start, p.End)).ToHashSet(); // Make a deep copy
         }
 
         public void MakeOriginalList () {
@@ -393,8 +393,8 @@ namespace Final.Controller {
                 int i = i = 255 / Edge.Count() + 1;
                 r += i;
                 g -= i;
-                Gl.glVertex3f(p.v1.X, p.v1.Y, p.v1.Z);
-                Gl.glVertex3f(p.v2.X, p.v2.Y, p.v2.Z);
+                Gl.glVertex3f(p.Start.X, p.Start.Y, p.Start.Z);
+                Gl.glVertex3f(p.End.X, p.End.Y, p.End.Z);
             }
             Gl.glEnd();
 

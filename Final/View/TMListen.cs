@@ -45,6 +45,7 @@ namespace Final.View {
             }
             catch (Exception ex) {
                 btn_connect.BackColor = Color.Red;
+                client.Close();
             }
 
         }
@@ -57,18 +58,28 @@ namespace Final.View {
             }
             catch (Exception) {
                 btn_connect.BackColor = Color.Red;
+                client.Close();
             }
         }
 
         public string GetString () {
             int cs = 0;
+            XYZABC p;
             string s =
                 "1,\r\n" +
-                "ChangeBase(\"yy\")\r\n" +
+                "ChangeBase(\"nLens\")\r\n" +
                 "ChangeTCP(\"pin2\")\r\n";
-            foreach (var p in Source)
-                //    s += $"PTP(\"CPP\",{p.X.ToString("f3")},{p.Y.ToString("f3")},{p.Z.ToString("f3")},{p.A.ToString("f3")},{p.B.ToString("f3")},{p.C.ToString("f3")},10,150,30,true)" + "\r\n";
-                s += $"PLine(\"CAP\",{p.X.ToString("f3")},{p.Y.ToString("f3")},{p.Z.ToString("f3")},{p.A.ToString("f3")},{p.B.ToString("f3")},{p.C.ToString("f3")},100,150,30)" + "\r\n";
+
+            for (int i = 0; i < Source.Count(); i++) {
+                p = Source[i];
+                if (i == 0 || i == 1 || i == Source.Count() || i == Source.Count() - 1)
+                    s += $"PLine(\"CAP\",{p.X.ToString("f3")},{p.Y.ToString("f3")},{p.Z.ToString("f3")},{p.A.ToString("f3")},{p.B.ToString("f3")},{p.C.ToString("f3")},100,150,0)" + "\r\n";
+                else
+                    s += $"PLine(\"CAP\",{p.X.ToString("f3")},{p.Y.ToString("f3")},{p.Z.ToString("f3")},{p.A.ToString("f3")},{p.B.ToString("f3")},{p.C.ToString("f3")},100,150,10)" + "\r\n";
+
+            }
+
+
             s = s.Remove(s.Length - 2, 2);
             s = s.Insert(0, $"TMSCT,{s.Length},");
             s = s.Insert(s.Length, ",");
@@ -78,6 +89,7 @@ namespace Final.View {
             s = s.Insert(s.Length, $"*{cs.ToString("X")}\r\n");
             return s;
         }
+
 
     }
 

@@ -1,10 +1,10 @@
 ﻿using Final.Model;
 using System;
-using System.Drawing;
 using OpenTK;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Tao.OpenGl;
+using Point = System.Drawing.Point;
 
 namespace Final.View {
     class OpenGLPanel : Panel {
@@ -12,12 +12,11 @@ namespace Final.View {
         Vector3 cmrCenter = new Vector3(0, 0, 0);
         Vector3 cmrX = new Vector3(-1, 0, 0);
         Vector3 cmrY = new Vector3(0, 1, 0);
-        Vector3 cmrZ = new Vector3(0, 0, -1);
         IntPtr hdc, hrc;
         Point CurrentRotate = new Point();
         Point CurrentTranslate = new Point();
         double scale = 2;
-        int Mouse_sensitive = 2;
+        int Mouse_sensitive = 1;
 
         public OpenGLPanel () {
             MouseDown += OpenGLPanel_MouseDown;
@@ -32,18 +31,9 @@ namespace Final.View {
             Gl.glFlush();
             Gl.glClear(Gl.GL_COLOR_BUFFER_BIT | Gl.GL_DEPTH_BUFFER_BIT);
             Gl.glLoadIdentity();
-            Gl.glOrtho(-Width / 2, Width / 2, -Height / 2, Height / 2, -10000, 10000);
-            //Glu.gluPerspective(30,1, 1, 10000);
+            Gl.glOrtho(-Width / 2, Width / 2, -Height / 2, Height / 2, -20000, 10000);
             SetCameraPosition();
-
-            //Gl.glFlush();
-            //Gl.glClear(Gl.GL_COLOR_BUFFER_BIT | Gl.GL_DEPTH_BUFFER_BIT);
-            //Gl.glLoadIdentity();
-            //Gl.glOrtho(-Width / 2, Width / 2, -Height / 2, Height / 2, -10000, 10000);
             Gl.glScaled(scale, scale, scale);
-            //Gl.glTranslatef(Translate.X, Translate.Y, 0);
-            //Gl.glRotatef(Rotate.Y, -1, 0, 0);
-            //Gl.glRotatef(Rotate.X, 0, 1, 0);
             #endregion
 
             #region Axis
@@ -84,15 +74,10 @@ namespace Final.View {
             SwapBuffers(hdc);
         }
 
-        public void SetCameraPosition () {
+        private void SetCameraPosition () {
             var cmrZ = Vector3.Cross(cmrX, cmrY);
-            var cmrPosition = cmrCenter - 200 * cmrZ;
-            var up = Vector3.Cross(cmrZ, cmrX).Normalized();
-            Glu.gluLookAt(cmrPosition.X, cmrPosition.Y, cmrPosition.Z, cmrCenter.X, cmrCenter.Y, cmrCenter.Z, up.X, up.Y, up.Z);
-        }
-
-        private void OpenGLPanel_SizeChanged (object sender, EventArgs e) {
-            Gl.glViewport(0, 0, Width, Height);
+            var cmrPosition = cmrCenter - 500 * cmrZ;
+            Glu.gluLookAt(cmrPosition.X, cmrPosition.Y, cmrPosition.Z, cmrCenter.X, cmrCenter.Y, cmrCenter.Z, cmrY.X, cmrY.Y, cmrY.Z);
         }
 
         private void OpenGLPanel_MouseMove (object sender, MouseEventArgs e) {
@@ -102,11 +87,10 @@ namespace Final.View {
                 case MouseButtons.None:
                     break;
                 case MouseButtons.Right:
-                    var x = Matrix4.CreateFromAxisAngle(cmrY, (CurrentRotate.X - e.X) / 200f);
-                    var y = Matrix4.CreateFromAxisAngle(cmrX, -(CurrentRotate.Y - e.Y) / 200f);
+                    var x = Matrix4.CreateFromAxisAngle(cmrY, (CurrentRotate.X - e.X) / 200f / Mouse_sensitive);
+                    var y = Matrix4.CreateFromAxisAngle(cmrX, -(CurrentRotate.Y - e.Y) / 200f / Mouse_sensitive);
                     cmrY = Vector3.Transform(cmrY, y);
                     cmrX = Vector3.Transform(cmrX, x);
-                    //cmrZ = Vector3.Transform(cmrZ, z);
                     CurrentRotate = e.Location;
                     break;
                 case MouseButtons.Middle:
@@ -121,20 +105,6 @@ namespace Final.View {
                 default:
                     break;
             }
-        }
-
-        private void OpenGLPanel_MouseWheel (object sender, MouseEventArgs e) {
-            if (scale > 0.1) {
-                if (e.Delta > 0)
-                    scale *= 1.05;
-                else
-                    scale *= 0.95;
-                if (scale < 0.1)
-                    scale = 0.11;
-            }
-
-            //cmrCenter += cmrZ * e.Delta / 3;
-
         }
 
         private void OpenGLPanel_MouseDown (object sender, MouseEventArgs e) {
@@ -157,6 +127,21 @@ namespace Final.View {
                 default:
                     break;
             }
+        }
+
+        private void OpenGLPanel_MouseWheel (object sender, MouseEventArgs e) {
+            if (scale > 0.1) {
+                if (e.Delta > 0)
+                    scale *= 1.05;
+                else
+                    scale *= 0.95;
+                if (scale < 0.1)
+                    scale = 0.11;
+            }
+        }
+
+        private void OpenGLPanel_SizeChanged (object sender, EventArgs e) {
+            Gl.glViewport(0, 0, Width, Height);
         }
 
         private void InitOpenGL () {

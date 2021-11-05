@@ -14,25 +14,29 @@ namespace Final.Model {
         public double B { get; set; }
         public double C { get; set; }
 
-        public XYZABC (Vector3 Vector, Vector3 Normal) {
+        public XYZABC (Vector3 Position, Vector3 Normal) {
             Normal = -Normal;
-            X = Vector.X;
-            Y = Vector.Y;
-            Z = Vector.Z;
-            var q1 = FromV1toV2(new Vector3(0, 0, 1), Normal);
-            var direction = Vector3.Cross(Vector3.UnitY, Normal);
-            var Yaxis = (q1 * new Quaternion(Vector3.UnitY, 0) * q1.Inverted()).Xyz;
-            var q2 = FromV1toV2(Yaxis, direction);
-            var a = ToEulerAngles(q2 * q1);
+            X = Position.X;
+            Y = Position.Y;
+            Z = Position.Z;
+
+            var Yaxis = Vector3.Cross(Normal, Vector3.UnitY);
+            var Xaxis = Vector3.Cross(Yaxis, Normal);
+            var m = new Matrix3(Xaxis, Yaxis, Normal);
+            m.Transpose();
+            var a = RotationMatrixToEulerAngles(m);
             A = a.X;
             B = a.Y;
             C = a.Z;
 
-            A *= (180 / Math.PI);
-            B *= (180 / Math.PI);
-            C *= (180 / Math.PI);
+            var r2pi = 180.0 / Math.PI;
+            A *= r2pi;
+            B *= r2pi;
+            C *= r2pi;
+            //A = -180;
+            //B = 0;
+            //C = 90;
         }
-
 
         private Quaternion FromV1toV2 (Vector3 u, Vector3 v) {
             if (u == -v) {
@@ -62,7 +66,6 @@ namespace Final.Model {
             return new Quaternion(Vector3.Cross(u, half), Vector3.Dot(u, half));
         }
 
-
         private Vector3 ToEulerAngles (Quaternion q) {
             double x, y, z;
             float sinr_cosp = 2 * (q.W * q.X + q.Y * q.Z);
@@ -77,6 +80,23 @@ namespace Final.Model {
             float siny_cosp = 2 * (q.W * q.Z + q.X * q.Y);
             float cosy_cosp = 1 - 2 * (q.Y * q.Y + q.Z * q.Z);
             z = Math.Atan2(siny_cosp, cosy_cosp);
+            return new Vector3((float)x, (float)y, (float)z);
+        }
+
+        Vector3 RotationMatrixToEulerAngles (Matrix3 R) {
+            var sy = Math.Sqrt(R.M11 * R.M11 + R.M21 * R.M21);
+            bool singular = sy < 1e-6; // If
+            double x, y, z;
+            if (!singular) {
+                x = Math.Atan2(R.M32, R.M33);
+                y = Math.Atan2(-R.M31, sy);
+                z = Math.Atan2(R.M21, R.M11);
+            }
+            else {
+                x = Math.Atan2(-R.M23, R.M22);
+                y = Math.Atan2(-R.M31, sy);
+                z = 0;
+            }
             return new Vector3((float)x, (float)y, (float)z);
         }
 

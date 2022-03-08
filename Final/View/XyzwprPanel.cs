@@ -1,12 +1,12 @@
-﻿using Final.Controller;
-using Final.Model;
+﻿using PathGenerator.Controller;
+using PathGenerator.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using Tao.OpenGl;
 
-namespace Final.View {
+namespace PathGenerator.View {
     public partial class XyzwprPanel : UserControl {
         List<List<XYZABC>> Sources = new List<List<XYZABC>>();
         BindingSource tmpSource;

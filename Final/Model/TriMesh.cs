@@ -1,7 +1,7 @@
 ﻿using OpenTK;
 using System;
 
-namespace Final.Model {
+namespace PathGenerator.Model {
     public class TriMesh {
         public Vector3 norm;
         public Vector3 v1;

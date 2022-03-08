@@ -1,4 +1,4 @@
-﻿namespace Final.View {
+﻿namespace PathGenerator.View {
     partial class XyzwprPanel {
         /// <summary> 
         /// 設計工具所需的變數。

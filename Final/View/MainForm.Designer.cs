@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace Final.View {
+namespace PathGenerator.View {
     partial class MainForm {
         /// <summary>
         /// 設計工具所需的變數。
@@ -37,8 +37,8 @@ namespace Final.View {
             this.toolStripLine = new System.Windows.Forms.ToolStripButton();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.GLView = new Final.View.OpenGLPanel();
-            this.xyzwprPanel = new Final.View.XyzwprPanel();
+            this.GLView = new PathGenerator.View.OpenGLPanel();
+            this.xyzwprPanel = new PathGenerator.View.XyzwprPanel();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStrip1.SuspendLayout();
@@ -213,7 +213,7 @@ namespace Final.View {
             this.Controls.Add(this.toolStrip1);
             this.MinimumSize = new System.Drawing.Size(700, 480);
             this.Name = "MainForm";
-            this.Text = "Deburr";
+            this.Text = "PathGenerator";
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.splitContainer1.Panel1.ResumeLayout(false);

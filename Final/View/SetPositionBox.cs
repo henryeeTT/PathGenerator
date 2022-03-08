@@ -1,9 +1,9 @@
-﻿using Final.Controller;
+﻿using PathGenerator.Controller;
 using System;
 using OpenTK;
 using System.Windows.Forms;
 
-namespace Final.View {
+namespace PathGenerator.View {
     public partial class SetPositionBox : Form {
         public STLController stl;
 

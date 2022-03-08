@@ -1,4 +1,4 @@
-﻿using Final.Model;
+﻿using PathGenerator.Model;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,7 +13,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Final.View {
+namespace PathGenerator.View {
     public partial class TMListen : Form {
         public List<XYZABC> Source;
         TcpClient client;

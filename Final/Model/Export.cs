@@ -1,5 +1,5 @@
-﻿using Final.Model;
-using Final.View;
+﻿using PathGenerator.Model;
+using PathGenerator.View;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,15 +8,15 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Final.Controller {
-    public class ExportTool {
+namespace PathGenerator.Controller {
+    public class Export {
         List<XYZABC> Source;
 
-        public ExportTool (List<XYZABC> source) {
+        public Export (List<XYZABC> source) {
             Source = source;
         }
 
-        public void Export () {
+        public void ExportLS () {
             if (Source.Count != 0) {
                 SaveFileDialog dgSaveFile = new SaveFileDialog();
                 dgSaveFile.Filter = "ls files(*.ls)|*.ls";

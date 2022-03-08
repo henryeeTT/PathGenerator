@@ -1,5 +1,5 @@
 ﻿
-namespace Final.View {
+namespace PathGenerator.View {
     partial class TMListen {
         /// <summary>
         /// Required designer variable.

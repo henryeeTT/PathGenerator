@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace Final.View {
+namespace PathGenerator.View {
     public static class Dialog {
 
         public static DialogResult InputBox (string title, string promptText, ref string value) {

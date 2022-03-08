@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-namespace Final.Model {
+namespace PathGenerator.Model {
     public class MeshGroup {
         public TriMesh[] meshes;
         public byte[] color = new byte[3];

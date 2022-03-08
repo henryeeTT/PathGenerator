@@ -1,11 +1,11 @@
-﻿using Final.View;
+﻿using PathGenerator.View;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Final {
+namespace PathGenerator {
     static class Program {
         /// <summary>
         /// 應用程式的主要進入點。

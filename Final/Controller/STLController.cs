@@ -1,4 +1,4 @@
-﻿using Final.Model;
+﻿using PathGenerator.Model;
 using OpenTK;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Windows.Forms;
 using System.Windows.Media.TextFormatting;
 using Tao.OpenGl;
 
-namespace Final.Controller {
+namespace PathGenerator.Controller {
 
     public class STLController {
         public bool Sorted = false;

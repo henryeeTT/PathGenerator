@@ -1,5 +1,5 @@
 ﻿
-namespace Final.View {
+namespace PathGenerator.View {
     partial class TMPathView {
         /// <summary>
         /// Required designer variable.

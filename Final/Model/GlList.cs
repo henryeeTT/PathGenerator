@@ -1,4 +1,4 @@
-﻿namespace Final.Model {
+﻿namespace PathGenerator.Model {
     enum GlList {
         Machine,
         Workpiece,

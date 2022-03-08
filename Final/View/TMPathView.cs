@@ -7,9 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Final.Model;
+using PathGenerator.Model;
 
-namespace Final.View {
+namespace PathGenerator.View {
     public partial class TMPathView : Form {
         List<XYZABC> Path;
         public TMPathView (List<XYZABC> Path) {

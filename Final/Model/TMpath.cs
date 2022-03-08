@@ -9,7 +9,7 @@ using System.Xml.Serialization;
 using System.IO;
 using System.Diagnostics;
 
-namespace Final.Model {
+namespace PathGenerator.Model {
 
     public class TMpath {
         private List<XYZABC> robotPath;

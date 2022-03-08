@@ -1,6 +1,6 @@
 ﻿using OpenTK;
 
-namespace Final.Model {
+namespace PathGenerator.Model {
     public class MyLine {
         public Vector3 Start;
         public Vector3 End;

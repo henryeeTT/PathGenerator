@@ -4,7 +4,7 @@ using System.Threading;
 
 
 
-namespace Final.Model {
+namespace PathGenerator.Model {
 
     public class XYZABC {
         public double X { get; set; }

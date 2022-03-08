@@ -72,7 +72,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controller\ExportTool.cs" />
+    <Compile Include="Model\Export.cs" />
     <Compile Include="Controller\STLPathController.cs" />
     <Compile Include="Model\DbscanAlgorithm.cs" />
     <Compile Include="Model\GlList.cs" />

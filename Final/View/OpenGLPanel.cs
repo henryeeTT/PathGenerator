@@ -1,4 +1,4 @@
-﻿using Final.Model;
+﻿using PathGenerator.Model;
 using System;
 using OpenTK;
 using System.Runtime.InteropServices;
@@ -6,7 +6,7 @@ using System.Windows.Forms;
 using Tao.OpenGl;
 using Point = System.Drawing.Point;
 
-namespace Final.View {
+namespace PathGenerator.View {
     class OpenGLPanel : Panel {
         public Action<int, int> SelectEvent;
         Vector3 cmrCenter = new Vector3(0, 0, 0);

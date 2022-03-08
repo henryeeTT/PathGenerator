@@ -4,7 +4,7 @@ using System.Linq;
 using System.Numerics;
 using Vector3 = OpenTK.Vector3;
 
-namespace Final.Model {
+namespace PathGenerator.Model {
     public class DbscanAlgorithm<T> where T : TriMesh {
         private readonly Func<T, T, double> _metricFunc;
 

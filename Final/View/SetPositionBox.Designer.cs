@@ -1,4 +1,4 @@
-﻿namespace Final.View {
+﻿namespace PathGenerator.View {
     partial class SetPositionBox {
         /// <summary>
         /// Required designer variable.

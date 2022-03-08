@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Final.Properties {
+namespace PathGenerator.Properties {
 
 
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

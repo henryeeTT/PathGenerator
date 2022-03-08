@@ -1,11 +1,11 @@
-﻿using Final.Controller;
-using Final.Model;
+﻿using PathGenerator.Controller;
+using PathGenerator.Model;
 using System;
 using System.Windows.Forms;
 using Tao.OpenGl;
 using OpenTK;
 
-namespace Final.View {
+namespace PathGenerator.View {
     public partial class MainForm : Form {
         STLPathController Workpiece;
         bool SelectMode, LineMode, isSorted;

@@ -10,7 +10,7 @@ namespace Final.Controller {
     public class STLPathController : STLController {
         public int PathNum;
         public MyLine[] Path;
-        private HashSet<MyLine> Vectors = new HashSet<MyLine>();
+        private HashSet<MyLine> myLines = new HashSet<MyLine>();
         private List<MeshGroup> SelectedGroup = new List<MeshGroup>();
         private List<byte[]> ColorRef = new List<byte[]>();
 
@@ -40,12 +40,12 @@ namespace Final.Controller {
 
         public void ResetPath () {
             SelectedGroup.Clear();
-            Vectors.Clear();
+            myLines.Clear();
             Gl.glNewList(PathNum, Gl.GL_COMPILE);
             Gl.glEndList();
         }
 
-        #region test
+        #region Face
         public void MakeUnsortPathList (byte[] color) {
             int ID = 0;
             bool hit = false;
@@ -83,7 +83,7 @@ namespace Final.Controller {
             }
 
             //-----------intersect edge betewwn groupA and groupB
-            Vectors.Clear();
+            myLines.Clear();
             var points = new HashSet<Vector3>();
             foreach (var gA in SelectedGroup.Where(p => p.groupA == true))
                 foreach (var gB in SelectedGroup.Where(p => p.groupB == true))
@@ -91,7 +91,7 @@ namespace Final.Controller {
                         foreach (var b in gB.meshes) {
                             var intersect = a.vectors.Intersect(b.vectors).ToArray();
                             if (intersect.Count() == 2) {
-                                Vectors.Add(new MyLine(intersect[0], intersect[1]) { Norm = b.norm });
+                                myLines.Add(new MyLine(intersect[0], intersect[1]) { Norm = b.norm });
                                 foreach (var c in intersect)
                                     points.Add(c);
                             }
@@ -109,7 +109,7 @@ namespace Final.Controller {
             Gl.glBegin(Gl.GL_LINES);
             Gl.glLineWidth(2);
             Gl.glColor3ub(255, 0, 0);
-            foreach (var p in Vectors) {
+            foreach (var p in myLines) {
                 Gl.glVertex3f(p.Start.X, p.Start.Y, p.Start.Z);
                 Gl.glVertex3f(p.Start.X + p.Norm.X * 15, p.Start.Y + p.Norm.Y * 15, p.Start.Z + p.Norm.Z * 15);
                 //Gl.glVertex3f(p.v2.X, p.v2.Y, p.v2.Z);
@@ -121,7 +121,7 @@ namespace Final.Controller {
 
         public void MakePathList (double angle) {
             try {
-                Path = CalcPath(Vectors, angle);
+                Path = CalcPath(myLines, angle);
             }
             catch (Exception) {
                 MessageBox.Show("Path Error, please check your path.");
@@ -187,24 +187,6 @@ namespace Final.Controller {
             }
             var tmpV1 = Path.First().Norm;
             var tmpV2 = Path.Last().Norm;
-
-            // See https://en.wikipedia.org/wiki/Rotation_matrix#Rotation_matrix_from_axis_and_angle
-            double a = angle * Math.PI / 180.0;
-            foreach (var p in Path) {
-                Vector3 n = (p.Start - p.End).Normalized();
-                Matrix3 rotate = new Matrix3(
-                    (float)(Math.Cos(a) + n.X * n.X * (1.0 - Math.Cos(a))),
-                    (float)(n.X * n.Y * (1.0 - Math.Cos(a)) - n.Z * Math.Sin(a)),
-                    (float)(n.X * n.Z * (1.0 - Math.Cos(a)) + n.Y * Math.Sin(a)),
-                    (float)(n.Y * n.X * (1.0 - Math.Cos(a)) + n.Z * Math.Sin(a)),
-                    (float)(Math.Cos(a) + n.Y * n.Y * (1.0 - Math.Cos(a))),
-                    (float)(n.Y * n.Z * (1.0 - Math.Cos(a)) - n.X * Math.Sin(a)),
-                    (float)(n.Z * n.X * (1.0 - Math.Cos(a)) - n.Y * Math.Sin(a)),
-                    (float)(n.Z * n.Y * (1.0 - Math.Cos(a)) + n.X * Math.Sin(a)),
-                    (float)(Math.Cos(a) + n.Z * n.Z * (1.0 - Math.Cos(a))));
-                Matrix4 t = new Matrix4(rotate);
-                p.Norm = Vector3.Transform(p.Norm, t);
-            }
             Path.Insert(0, new MyLine(Path.First().Start + tmpV1 * 50, Path.First().Start, Path.First().Norm));
             Path.Add(new MyLine(Path.Last().End, Path.Last().End + tmpV2 * 50, Path.Last().Norm));
             Path.Add(new MyLine(Path.Last().End, Path.Last().End + tmpV2 * 50, Path.Last().Norm));
@@ -212,12 +194,12 @@ namespace Final.Controller {
             return Path.ToArray();
         }
 
-        public BindingSource MakeBindingSource () {
+        public BindingSource MakeFaceBindingSource () {
             var source = new BindingSource();
             if (Path != null)
                 foreach (var p in Path) {
-                   // if ((p.Start - p.End).Length >= 2)
-                        source.Add(new XYZABC(p.Start, p.Norm));
+                    // if ((p.Start - p.End).Length >= 2)
+                    source.Add(new XYZABC(p.Start, p.Norm));
                     //source.Add(new XYZWPR((p.v1 + p.v2) / 2, p.Norm)); //interpolation
                     //source.Add(new XYZWPR(p.v2, p.Norm));
                 }
@@ -229,87 +211,92 @@ namespace Final.Controller {
         public void ClearPathList () {
             Gl.glNewList(PathNum, Gl.GL_COMPILE);
             Gl.glEndList();
-        } 
+        }
 
-        public void MakeLineList (int x, int y) {            
+        public void MakeLineList (int x, int y) {
+            var p = GetPoint(x, y);
+            if (p != null)
+                if (myLines.Count == 0)
+                    myLines.Add(new MyLine(p.Item1, p.Item1, p.Item2));
+                else {
+                    var cut = Math.Abs((int)(p.Item1 - myLines.Last().End).LengthFast / 4);
+                    var start = Transform3Dto2D(myLines.Last().End);
+                    var dx = (x - start.X) / cut;
+                    var dy = (y - start.Y) / cut;
+                    for (int i = 1; i <= cut ; i++) {
+                        x = (int)(start.X + i * dx);
+                        y = (int)(start.Y + i * dy);
+                        p = GetPoint(x, y);
+                        if (p != null) {
+                            var l = new MyLine(p.Item1,p.Item1,p.Item2);
+                            myLines.Add(l);
+                        }
+                    }
+                }
+            Path = myLines.ToArray();
+            Gl.glNewList(PathNum, Gl.GL_COMPILE);
+            int b = 0, g = 255;
+            for (int i = 0; i < Path.Count(); i++) {
+                Gl.glColor3ub(0, (byte)g, (byte)b);
+                int j = 255 / Path.Count() - 1;
+                b += j;
+                g -= j;
+                Gl.glPushMatrix();
+                Gl.glTranslated(Path[i].Start.X, Path[i].Start.Y, Path[i].Start.Z);
+                Glu.gluSphere(Glu.gluNewQuadric(), 1.5, 36, 36);
+                Gl.glPopMatrix();
+                Gl.glBegin(Gl.GL_LINES);
+                Gl.glLineWidth(2);
+                Gl.glVertex3f(Path[i].Start.X, Path[i].Start.Y, Path[i].Start.Z);
+                Gl.glVertex3f(
+                Path[i].Start.X + Path[i].Norm.X * 15,
+                Path[i].Start.Y + Path[i].Norm.Y * 15,
+                Path[i].Start.Z + Path[i].Norm.Z * 15);
+                //Gl.glVertex3f(Path[i].v2.X, Path[i].v2.Y, Path[i].v2.Z);
+                //Gl.glVertex3f(
+                //Path[i].v2.X + Path[i].Norm.X * 15,
+                //Path[i].v2.Y + Path[i].Norm.Y * 15,
+                //Path[i].v2.Z + Path[i].Norm.Z * 15);
+                Gl.glEnd();
+                //Gl.glBegin(Gl.GL_LINES);
+                //Gl.glLineWidth(2);
+                //Gl.glVertex3f(Path[i].Start.X, Path[i].Start.Y, Path[i].Start.Z);
+                //Gl.glVertex3f(Path[i].End.X, Path[i].End.Y, Path[i].End.Z);
+                //Gl.glEnd();
+            }
+            Gl.glEndList();
+
+        }
+
+        private Tuple<Vector3, Vector3> GetPoint (int x, int y) {
             byte[] color = new byte[3];
             var p = Transform2Dto3D(x, y);
             Gl.glReadPixels(x, y, 1, 1, Gl.GL_RGB, Gl.GL_UNSIGNED_BYTE, color);
-            if (IfGetMesh(color)) {
-                int cnt = color[0] + color[1] * 256 + color[2] * 65536;
-                if (Vectors.Count == 0)
-                    Vectors.Add(new MyLine(p, p, STLdata[cnt].norm));
-                else {
-                    var cut = Math.Abs((int)(p - Vectors.Last().End).LengthFast / 2);
-                    var start = Transform3Dto2D(Vectors.Last().End);
-                    var dx = (x - start.X)/cut;
-                    var dy = (y - start.Y)/cut;
-                    for (int i =1; i<cut; i++) {
-                        x = (int)(start.X + i* dx);
-                        y = (int)(start.Y + i*dy);
-                        Gl.glReadPixels(x, y, 1, 1, Gl.GL_RGB, Gl.GL_UNSIGNED_BYTE, color);
-                        if (IfGetMesh(color)) {
-                            int c = color[0] + color[1] * 256 + color[2] * 65536;
-                            Vectors.Add(new MyLine(Vectors.Last().End, Transform2Dto3D(x, y), STLdata[c].norm));
-                        }
-                    }
-                    Vectors.Add(new MyLine(Vectors.Last().End, p, STLdata[cnt].norm));
+            int cnt = color[0] + color[1] * 256 + color[2] * 65536;
+            if (color[0] != 229 && color[0] != 229 && color[0] != 229 && color[0] != 229)
+                if (cnt <= STLdata.Length) {
+                    Console.WriteLine(STLdata[cnt].v1.Xzy.ToString() + " " + STLdata[cnt].v2.Xzy.ToString() + " " + STLdata[cnt].v3.Xzy.ToString());
+                    return new Tuple<Vector3, Vector3>(p, STLdata[cnt].norm);
                 }
-                Path = Vectors.ToArray();
-                Gl.glNewList(PathNum, Gl.GL_COMPILE);
-                int b = 0, g = 255;
-                for (int i = 0; i < Path.Count(); i++) {
-                    Gl.glColor3ub(0, (byte)g, (byte)b);
-                    int j = 255 / Path.Count() - 1;
-                    b += j;
-                    g -= j;
-                    Gl.glPushMatrix();
-                    Gl.glTranslated(Path[i].Start.X, Path[i].Start.Y, Path[i].Start.Z);
-                    Glu.gluSphere(Glu.gluNewQuadric(), 1.5, 36, 36);
-                    Gl.glPopMatrix();
-                    Gl.glBegin(Gl.GL_LINES);
-                    Gl.glLineWidth(2);
-                    Gl.glVertex3f(Path[i].Start.X, Path[i].Start.Y, Path[i].Start.Z);
-                    Gl.glVertex3f(
-                    Path[i].Start.X + Path[i].Norm.X * 15,
-                    Path[i].Start.Y + Path[i].Norm.Y * 15,
-                    Path[i].Start.Z + Path[i].Norm.Z * 15);
-                    //Gl.glVertex3f(Path[i].v2.X, Path[i].v2.Y, Path[i].v2.Z);
-                    //Gl.glVertex3f(
-                    //Path[i].v2.X + Path[i].Norm.X * 15,
-                    //Path[i].v2.Y + Path[i].Norm.Y * 15,
-                    //Path[i].v2.Z + Path[i].Norm.Z * 15);
-                    Gl.glEnd();
-                    Gl.glBegin(Gl.GL_LINES);
-                    Gl.glLineWidth(2);
-                    Gl.glVertex3f(Path[i].Start.X, Path[i].Start.Y, Path[i].Start.Z);
-                    Gl.glVertex3f(Path[i].End.X, Path[i].End.Y, Path[i].End.Z);
-                    Gl.glEnd();
-                }
-                Gl.glEndList();
-            }
+                else
+                    return null;
+            else
+                return null;
         }
 
-        private bool IfGetMesh (byte[] color) {
-            if (color[0] != 229 && color[0] != 229 && color[0] != 229 && color[0] != 229)
-                if (color[0] + color[1] * 256 + color[2] * 65536 <= STLdata.Length)
-                    return true;
-                else
-                    return false;
-            else 
-                return false;
-            
+        private Vector3 Projection (Vector3 v, Vector3 n) {
+            return v - Vector3.Dot(v, n) * n;
         }
 
         public BindingSource MakeLineBindingSource () {
             var source = new BindingSource();
-            Vectors.Add(new MyLine(Vectors.Last().End, Vectors.Last().End + 30 * Vectors.Last().Norm, Vectors.Last().Norm));
-            Vectors.Add(new MyLine(Vectors.Last().End, Vectors.Last().End + 30 * Vectors.Last().Norm, Vectors.Last().Norm));
-            Path = Vectors.ToArray();
+            myLines.Add(new MyLine(myLines.Last().End, myLines.Last().End + 30 * myLines.Last().Norm, myLines.Last().Norm));
+            myLines.Add(new MyLine(myLines.Last().End, myLines.Last().End + 30 * myLines.Last().Norm, myLines.Last().Norm));
+            Path = myLines.ToArray();
             Path[0].Start = Path[0].Start + 20 * Path[0].Norm;
             if (Path != null)
                 foreach (var p in Path) {
-                        source.Add(new XYZABC(p.Start, p.Norm));
+                    source.Add(new XYZABC(p.Start, p.Norm));
                     //source.Add(new XYZWPR((p.v1 + p.v2) / 2, p.Norm)); //interpolation
                     //source.Add(new XYZWPR(p.v2, p.Norm));
                 }

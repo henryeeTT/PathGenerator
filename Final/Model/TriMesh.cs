@@ -1,4 +1,5 @@
 ﻿using OpenTK;
+using System;
 
 namespace Final.Model {
     public class TriMesh {
@@ -41,5 +42,25 @@ namespace Final.Model {
             myLine = new MyLine[3] { new MyLine(v1, v2), new MyLine(v2, v3), new MyLine(v1, v3) };
         }
 
+        public void CheckZero () { 
+            //if (Math.Abs(v1.X) < 0.000001)
+            //    norm.X = 0.00001f;
+            //if (Math.Abs(v1.Y) < 0.000001)
+            //    norm.X = 0.00001f;
+            //if (Math.Abs(v1.Z) < 0.000001)
+            //    norm.X = 0.00001f;
+            //if (Math.Abs(v2.X) < 0.000001)
+            //    norm.X = 0.00001f;
+            //if (Math.Abs(v2.Y) < 0.000001)
+            //    norm.X = 0.00001f;
+            //if (Math.Abs(v2.Z) < 0.000001)
+            //    norm.X = 0.00001f;
+            //if (Math.Abs(v3.X) < 0.000001)
+            //    norm.X = 0.00001f;
+            //if (Math.Abs(v3.Y) < 0.000001)
+            //    norm.X = 0.00001f;
+            //if (Math.Abs(v3.Z) < 0.000001)
+            //    norm.X = 0.00001f;
+        }
     }
 }

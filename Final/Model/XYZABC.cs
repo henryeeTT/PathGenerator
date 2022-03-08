@@ -20,8 +20,8 @@ namespace Final.Model {
             Y = Position.Y;
             Z = Position.Z;
 
-            var Yaxis = Vector3.Cross(Normal, Vector3.UnitY);
-            var Xaxis = Vector3.Cross(Yaxis, Normal);
+            var Yaxis = Vector3.Cross(Normal, Vector3.UnitY).Normalized();
+            var Xaxis = Vector3.Cross(Yaxis, Normal).Normalized();
             var m = new Matrix3(Xaxis, Yaxis, Normal);
             m.Transpose();
             var a = RotationMatrixToEulerAngles(m);

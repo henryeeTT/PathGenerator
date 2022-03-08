@@ -106,7 +106,7 @@ namespace Final.View {
             if(SelectMode)
             if (Dialog.InputBox("Set rotate angle", "Angle in degree:", ref value) == DialogResult.OK) {
                 Workpiece.MakePathList(float.Parse(value));
-                xyzwprPanel.RefreshSource(Workpiece.MakeBindingSource());
+                xyzwprPanel.RefreshSource(Workpiece.MakeFaceBindingSource());
             }
             if (LineMode) {
                 xyzwprPanel.RefreshSource(Workpiece.MakeLineBindingSource());

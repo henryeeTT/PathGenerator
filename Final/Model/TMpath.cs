@@ -30,7 +30,6 @@ namespace Final.Model {
                 path += $@"\path1.PATH";
                 CreatePathFile(path, speed);
                 RunZip(RootPath);
-                //Directory.Delete(RootPath);
             }
         }
 
@@ -117,12 +116,12 @@ namespace Final.Model {
         public string joint_angle { get; set; } = "0,0,0,0,0,0";
         public string tool_mode { get; set; } = "0,0,0,0,0,0";
         public string Blend { get; set; } = "YES";
-        public int BlendValue { get; set; } = 80;
+        public int BlendValue { get; set; } = 50;
         public string LineABS { get; set; } = "ON";
         public int LSAVelocity { get; set; } = 100;
-        public int LSTTTS { get; set; } = 100;
-        public int PLSAVelocity { get; set; } = 200;
-        public int PLSTTTS { get; set; } = 500;
+        public int LSTTTS { get; set; } = 150;
+        public int PLSAVelocity { get; set; } = 100;
+        public int PLSTTTS { get; set; } = 150;
         public int LSPercentage { get; set; } = 100;
         public string PSTTTSOF { get; set; } = "ON";
         public int PSTTTS { get; set; } = 250;

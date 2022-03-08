@@ -37,7 +37,7 @@ namespace Final.View {
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("新細明體", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.label1.Location = new System.Drawing.Point(125, 93);
+            this.label1.Location = new System.Drawing.Point(40, 66);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(25, 19);
             this.label1.TabIndex = 0;
@@ -47,7 +47,7 @@ namespace Final.View {
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("新細明體", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.label2.Location = new System.Drawing.Point(125, 129);
+            this.label2.Location = new System.Drawing.Point(40, 102);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(39, 19);
             this.label2.TabIndex = 1;
@@ -55,7 +55,7 @@ namespace Final.View {
             // 
             // btn_connect
             // 
-            this.btn_connect.Location = new System.Drawing.Point(99, 194);
+            this.btn_connect.Location = new System.Drawing.Point(35, 127);
             this.btn_connect.Name = "btn_connect";
             this.btn_connect.Size = new System.Drawing.Size(75, 23);
             this.btn_connect.TabIndex = 2;
@@ -65,7 +65,7 @@ namespace Final.View {
             // 
             // btn_star
             // 
-            this.btn_star.Location = new System.Drawing.Point(250, 194);
+            this.btn_star.Location = new System.Drawing.Point(116, 127);
             this.btn_star.Name = "btn_star";
             this.btn_star.Size = new System.Drawing.Size(75, 23);
             this.btn_star.TabIndex = 3;
@@ -75,7 +75,7 @@ namespace Final.View {
             // 
             // txt_ip
             // 
-            this.txt_ip.Location = new System.Drawing.Point(176, 90);
+            this.txt_ip.Location = new System.Drawing.Point(91, 63);
             this.txt_ip.Name = "txt_ip";
             this.txt_ip.Size = new System.Drawing.Size(100, 22);
             this.txt_ip.TabIndex = 4;
@@ -83,7 +83,7 @@ namespace Final.View {
             // 
             // txt_port
             // 
-            this.txt_port.Location = new System.Drawing.Point(176, 126);
+            this.txt_port.Location = new System.Drawing.Point(91, 99);
             this.txt_port.Name = "txt_port";
             this.txt_port.Size = new System.Drawing.Size(100, 22);
             this.txt_port.TabIndex = 5;
@@ -93,7 +93,7 @@ namespace Final.View {
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("新細明體", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.label3.Location = new System.Drawing.Point(125, 51);
+            this.label3.Location = new System.Drawing.Point(40, 24);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(109, 19);
             this.label3.TabIndex = 6;
@@ -103,7 +103,7 @@ namespace Final.View {
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(440, 301);
+            this.ClientSize = new System.Drawing.Size(222, 172);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.txt_port);
             this.Controls.Add(this.txt_ip);

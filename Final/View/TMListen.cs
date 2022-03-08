@@ -18,9 +18,12 @@ namespace Final.View {
         public List<XYZABC> Source;
         TcpClient client;
         NetworkStream stream;
+        Object _lock;
 
-        public TMListen () {
+        public TMListen (List<XYZABC> Source) {
             InitializeComponent();
+            this.Source = Source;
+            UpdateUI();
         }
 
         public void UpdateUI () {
@@ -41,10 +44,12 @@ namespace Final.View {
                         Task.Delay(1000);
                 });
                 btn_connect.BackColor = Color.Red;
+                stream.Close();
                 client.Close();
             }
             catch (Exception ex) {
                 btn_connect.BackColor = Color.Red;
+                stream.Close();
                 client.Close();
             }
 
@@ -58,6 +63,7 @@ namespace Final.View {
             }
             catch (Exception) {
                 btn_connect.BackColor = Color.Red;
+                stream.Close();
                 client.Close();
             }
         }
@@ -67,7 +73,7 @@ namespace Final.View {
             XYZABC p;
             string s =
                 "1,\r\n" +
-                "ChangeBase(\"nLens\")\r\n" +
+                "ChangeBase(\"yy\")\r\n" +
                 "ChangeTCP(\"pin2\")\r\n";
 
             for (int i = 0; i < Source.Count(); i++) {
@@ -75,7 +81,7 @@ namespace Final.View {
                 if (i == 0 || i == 1 || i == Source.Count() || i == Source.Count() - 1)
                     s += $"PLine(\"CAP\",{p.X.ToString("f3")},{p.Y.ToString("f3")},{p.Z.ToString("f3")},{p.A.ToString("f3")},{p.B.ToString("f3")},{p.C.ToString("f3")},100,150,0)" + "\r\n";
                 else
-                    s += $"PLine(\"CAP\",{p.X.ToString("f3")},{p.Y.ToString("f3")},{p.Z.ToString("f3")},{p.A.ToString("f3")},{p.B.ToString("f3")},{p.C.ToString("f3")},100,150,10)" + "\r\n";
+                    s += $"PLine(\"CAP\",{p.X.ToString("f3")},{p.Y.ToString("f3")},{p.Z.ToString("f3")},{p.A.ToString("f3")},{p.B.ToString("f3")},{p.C.ToString("f3")},100,150,50)" + "\r\n";
 
             }
 

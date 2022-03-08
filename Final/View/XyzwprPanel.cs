@@ -38,6 +38,8 @@ namespace Final.View {
             try {
                 Sources.RemoveAt(index);
                 CboPath.Items.Remove("Path" + index);
+                cnt -= 1;
+                CboPath.SelectedIndex = -1;
             }
             catch (Exception) {
             }
@@ -48,7 +50,7 @@ namespace Final.View {
             foreach (var p in Sources)
                 tmp.AddRange(p);
             //ExportTool ET = new ExportTool(tmp);
-            //ET.ExportTM();
+            //new TMListen(tmp).ShowDialog();
             new TMPathView(tmp).Show();
         }
 

@@ -1,19 +1,21 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
+using Vector3 = OpenTK.Vector3;
 
 namespace Final.Model {
     public class DbscanAlgorithm<T> where T : TriMesh {
         private readonly Func<T, T, double> _metricFunc;
 
-        public DbscanAlgorithm(Func<T, T, double> metricFunc) {
+        public DbscanAlgorithm (Func<T, T, double> metricFunc) {
             _metricFunc = metricFunc;
         }
 
-        public DbscanAlgorithm () {            
+        public DbscanAlgorithm () {
         }
 
-        public void ComputeClusterDbscan(T[] allPoints, double epsilon, int minPts, out HashSet<T[]> clusters) {
+        public void ComputeClusterDbscan (T[] allPoints, double epsilon, int minPts, out HashSet<T[]> clusters) {
             DbscanPoint<T>[] allPointsDbscan = allPoints.Select(x => new DbscanPoint<T>(x)).ToArray();
             int clusterId = 0;
 
@@ -40,7 +42,7 @@ namespace Final.Model {
                 );
         }
 
-        private void ExpandCluster(DbscanPoint<T>[] allPoints, DbscanPoint<T> point, DbscanPoint<T>[] neighborPts, int clusterId, double epsilon, int minPts) {
+        private void ExpandCluster (DbscanPoint<T>[] allPoints, DbscanPoint<T> point, DbscanPoint<T>[] neighborPts, int clusterId, double epsilon, int minPts) {
             point.ClusterId = clusterId;
             for (int i = 0; i < neighborPts.Length; i++) {
                 DbscanPoint<T> pn = neighborPts[i];
@@ -57,14 +59,11 @@ namespace Final.Model {
             }
         }
 
-        private void RegionQuery(DbscanPoint<T>[] allPoints, T point, double epsilon, out DbscanPoint<T>[] neighborPts) {
+        private void RegionQuery (DbscanPoint<T>[] allPoints, T point, double epsilon, out DbscanPoint<T>[] neighborPts) {
             neighborPts = (from p in allPoints.AsParallel()
-                           where p.ClusterPoint.norm.Z > (point.norm.Z - epsilon)
-                           where p.ClusterPoint.norm.Z < (point.norm.Z + epsilon)
-                           where p.ClusterPoint.norm.X > (point.norm.X - epsilon)
-                           where p.ClusterPoint.norm.X < (point.norm.X + epsilon)
-                           where p.ClusterPoint.norm.Y > (point.norm.Y - epsilon)
-                           where p.ClusterPoint.norm.Y < (point.norm.Y + epsilon)
+                           where Math.Abs(p.ClusterPoint.norm.X - point.norm.X) < 0.1
+                           where Math.Abs(p.ClusterPoint.norm.Y - point.norm.Y) < 0.1
+                           where Math.Abs(p.ClusterPoint.norm.Z - point.norm.Z) < 0.1
                            where _metricFunc(point, p.ClusterPoint) <= epsilon
                            select p).ToArray();
         }
@@ -79,7 +78,7 @@ namespace Final.Model {
             public T ClusterPoint;
             public int ClusterId;
 
-            public DbscanPoint(T x) {
+            public DbscanPoint (T x) {
                 ClusterPoint = x;
                 IsVisited = false;
                 ClusterId = (int)ClusterIds.Unclassified;

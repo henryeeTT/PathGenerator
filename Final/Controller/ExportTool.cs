@@ -122,11 +122,6 @@ namespace Final.Controller {
                 MessageBox.Show("Please calculate path first.");
         }
 
-        public void ExportTM () {
-            var tmp = new TMListen();
-            tmp.Source = Source;
-            tmp.UpdateUI();
-            tmp.ShowDialog();
-        }
+
     }
 }

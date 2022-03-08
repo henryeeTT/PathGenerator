@@ -93,6 +93,7 @@ namespace PathGenerator.View {
 
                 sw.Stop();
                 MessageBox.Show("Time Spent : " + sw.Elapsed.TotalSeconds.ToString("f2") + " sec");
+                SelectMode = true;
                 btnStatusHandler();
             }
         }

@@ -8,9 +8,11 @@ using System.Windows.Forms;
 using System.Windows.Media.TextFormatting;
 using Tao.OpenGl;
 
-namespace PathGenerator.Controller {
+namespace PathGenerator.Controller
+{
 
-    public class STLController {
+    public class STLController
+    {
         public bool Sorted = false;
         public int ListNum;
         public TriMesh[] STLdata;
@@ -20,14 +22,16 @@ namespace PathGenerator.Controller {
         public HashSet<MyLine> Edge = new HashSet<MyLine>();
         public HashSet<MyLine> _Edge = new HashSet<MyLine>();
         public Vector3 Position { get; set; } = new Vector3(0, 0, -5);
-        public Quaternion Rotation { get; set; } = new Quaternion(0,0,0,1);
+        public Quaternion Rotation { get; set; } = new Quaternion(0, 0, 0, 1);
 
 
-        public STLController (int listName) {
+        public STLController(int listName)
+        {
             ListNum = listName;
         }
 
-        public void ReadBinaryFile (string filePath) {
+        public void ReadBinaryFile(string filePath)
+        {
             List<TriMesh> meshList = new List<TriMesh>();
             int numOfMesh;
             int i;
@@ -37,7 +41,8 @@ namespace PathGenerator.Controller {
             byte[] temp = new byte[4];
 
             /* 80 bytes title + 4 byte num of triangles + 50 bytes (1 of triangular mesh)  */
-            if (fileBytes.Length > 120) {
+            if (fileBytes.Length > 120)
+            {
 
                 temp[0] = fileBytes[80];
                 temp[1] = fileBytes[81];
@@ -48,7 +53,8 @@ namespace PathGenerator.Controller {
 
                 byteIndex = 84;
 
-                for (i = 0; i < numOfMesh; i++) {
+                for (i = 0; i < numOfMesh; i++)
+                {
                     TriMesh newMesh = new TriMesh();
 
                     /* this try-catch block will be reviewed */
@@ -92,7 +98,8 @@ namespace PathGenerator.Controller {
                 }
 
             }
-            else {
+            else
+            {
                 // nitentionally left blank
             }
 
@@ -102,19 +109,23 @@ namespace PathGenerator.Controller {
                 _STLdata[i] = new TriMesh(meshList[i]); // Make a deep copy
         }
 
-        public void ReadASCIIFile (string filePath) {
+        public void ReadASCIIFile(string filePath)
+        {
             List<TriMesh> meshList = new List<TriMesh>();
 
             StreamReader txtReader = new StreamReader(filePath);
 
             string lineString;
 
-            while (!txtReader.EndOfStream) {
+            while (!txtReader.EndOfStream)
+            {
                 lineString = txtReader.ReadLine().Trim(); /* delete whitespace in front and tail of the string */
                 string[] lineData = lineString.Split(' ');
 
-                if (lineData[0] == "solid") {
-                    while (lineData[0] != "endsolid") {
+                if (lineData[0] == "solid")
+                {
+                    while (lineData[0] != "endsolid")
+                    {
                         lineString = txtReader.ReadLine().Trim(); // facetnormal
                         lineData = lineString.Split(' ');
 
@@ -192,25 +203,41 @@ namespace PathGenerator.Controller {
                 _STLdata[i] = new TriMesh(meshList[i]); // Make a deep copy
         }
 
-        public bool OpenFile () {
+        public bool OpenFile()
+        {
             OpenFileDialog dgOpenFile = new OpenFileDialog();
-            dgOpenFile.InitialDirectory = System.Windows.Forms.Application.StartupPath;
+            var str = Directory.GetCurrentDirectory();
+            str = Directory.GetParent(str).ToString();
+            str = Directory.GetParent(str).ToString();
+            str = Directory.GetParent(str).ToString();
+            try
+            {
+                dgOpenFile.InitialDirectory = Path.Combine(str, "3Dmodel");
+            }
+            catch ()
+            {
+                dgOpenFile.InitialDirectory = Directory.GetCurrentDirectory();
+            }
             dgOpenFile.Filter = "STL file(*.stl)|*.stl";
             if (dgOpenFile.ShowDialog() != DialogResult.OK)
                 return false;
             var path = System.IO.Path.GetFullPath(dgOpenFile.FileName);
-            try {
+            try
+            {
                 ReadASCIIFile(path);
             }
-            catch (Exception) {
+            catch (Exception)
+            {
                 ReadBinaryFile(path);
             }
             return true;
         }
 
-        public void SetOriginalPosition () {
+        public void SetOriginalPosition()
+        {
             var tmp = new List<TriMesh>();
-            foreach (var x in _STLdata) {
+            foreach (var x in _STLdata)
+            {
                 var v1 = Transform(x.v1, Position, Rotation);
                 var v2 = Transform(x.v2, Position, Rotation);
                 var v3 = Transform(x.v3, Position, Rotation);
@@ -220,10 +247,13 @@ namespace PathGenerator.Controller {
             STLdata = tmp.ToArray();
         }
 
-        public void SetSortedPosition () {
-            for (int i = 0; i < _Meshgroup.Count(); i++) {
+        public void SetSortedPosition()
+        {
+            for (int i = 0; i < _Meshgroup.Count(); i++)
+            {
                 var tmp = new List<TriMesh>();
-                foreach (var x in _Meshgroup[i].meshes) {
+                foreach (var x in _Meshgroup[i].meshes)
+                {
                     var v1 = Transform(x.v1, Position, Rotation);
                     var v2 = Transform(x.v2, Position, Rotation);
                     var v3 = Transform(x.v3, Position, Rotation);
@@ -234,20 +264,23 @@ namespace PathGenerator.Controller {
             }
 
             Edge = _Edge.Select(p => new MyLine(p.Start, p.End)).ToHashSet(); // Restore bcackup
-            foreach (var x in Edge) {
+            foreach (var x in Edge)
+            {
                 x.Start = Transform(x.Start, Position, Rotation);
                 x.End = Transform(x.End, Position, Rotation);
             }
         }
 
-        private Vector3 Transform (Vector3 vector, Vector3 Position, Quaternion Rotation) {
+        private Vector3 Transform(Vector3 vector, Vector3 Position, Quaternion Rotation)
+        {
             vector += Position;
             var q = Rotation * new Quaternion(vector, 0) * Quaternion.Invert(Rotation);
             vector = q.Xyz;
             return vector;
         }
 
-        public void MeshGrouping (float eps, int minpts) {
+        public void MeshGrouping(float eps, int minpts)
+        {
             Position = Vector3.Zero;
             Rotation = new Quaternion(0, 0, 0, 1);
             Meshgroup.Clear();
@@ -258,7 +291,8 @@ namespace PathGenerator.Controller {
             //--------------Do DBSCAN
             Sorted = true;
             HashSet<TriMesh[]> clusters;
-            var dbs = new DbscanAlgorithm<TriMesh>((TriMesh s1, TriMesh s2) => {
+            var dbs = new DbscanAlgorithm<TriMesh>((TriMesh s1, TriMesh s2) =>
+            {
                 if (s1.v1.X == s2.v1.X)
                     if (s1.v1.Y == s2.v1.Y)
                         if (s1.v1.Z == s2.v1.Z)
@@ -271,8 +305,8 @@ namespace PathGenerator.Controller {
                     if (s1.v1.Y == s2.v3.Y)
                         if (s1.v1.Z == s2.v3.Z)
                             goto End;
-                //--------------------------------
-                if (s1.v2.X == s2.v1.X)
+                    //--------------------------------
+                    if (s1.v2.X == s2.v1.X)
                     if (s1.v2.Y == s2.v1.Y)
                         if (s1.v2.Z == s2.v1.Z)
                             goto End;
@@ -284,8 +318,8 @@ namespace PathGenerator.Controller {
                     if (s1.v2.Y == s2.v3.Y)
                         if (s1.v2.Z == s2.v3.Z)
                             goto End;
-                //--------------------------------
-                if (s1.v3.X == s2.v1.X)
+                    //--------------------------------
+                    if (s1.v3.X == s2.v1.X)
                     if (s1.v3.Y == s2.v1.Y)
                         if (s1.v3.Z == s2.v1.Z)
                             goto End;
@@ -305,7 +339,8 @@ namespace PathGenerator.Controller {
 
             //--------------Set color and mesh group
             var rand = new Random();
-            for (int i = 0; i < clusters.Count(); i++) {
+            for (int i = 0; i < clusters.Count(); i++)
+            {
                 var color = new byte[3];
                 rand.NextBytes(color);
                 Meshgroup.Add(new MeshGroup(clusters.ElementAt(i), color, i));
@@ -320,7 +355,8 @@ namespace PathGenerator.Controller {
                     foreach (var b in x.meshes)
                         if (a != b)
                             foreach (var va in a.myLine)
-                                foreach (var vb in b.myLine) {
+                                foreach (var vb in b.myLine)
+                                {
                                     AllLine.Add(va);
                                     if (MyLine.equal(va, vb))
                                         AllLineWithoutEdge.Add(va);
@@ -329,14 +365,16 @@ namespace PathGenerator.Controller {
             _Edge = Edge.Select(p => new MyLine(p.Start, p.End)).ToHashSet(); // Make a deep copy
         }
 
-        public void MakeOriginalList () {
+        public void MakeOriginalList()
+        {
             Gl.glNewList(ListNum, Gl.GL_COMPILE);
 
             // draw mesh
             Gl.glEnable(Gl.GL_POLYGON_OFFSET_FILL);
             Gl.glPolygonOffset(1.0f, 1.0f);
             Gl.glPolygonMode(Gl.GL_FRONT_AND_BACK, Gl.GL_FILL);
-            foreach (var x in STLdata) {
+            foreach (var x in STLdata)
+            {
                 Gl.glBegin(Gl.GL_TRIANGLES);
                 Gl.glNormal3f(x.norm.X, x.norm.Y, x.norm.Z);
                 Gl.glVertex3f(x.v1.X, x.v1.Y, x.v1.Z);
@@ -349,7 +387,8 @@ namespace PathGenerator.Controller {
             //draw edge
             Gl.glColor3f(0, 0, 0);
             Gl.glLineWidth(1);
-            foreach (var x in STLdata) {
+            foreach (var x in STLdata)
+            {
                 Gl.glBegin(Gl.GL_LINE_LOOP);
                 Gl.glVertex3f(x.v1.X, x.v1.Y, x.v1.Z);
                 Gl.glVertex3f(x.v2.X, x.v2.Y, x.v2.Z);
@@ -359,7 +398,8 @@ namespace PathGenerator.Controller {
             Gl.glEndList();
         }
 
-        public void MakeSortedList () {
+        public void MakeSortedList()
+        {
             Gl.glNewList(ListNum, Gl.GL_COMPILE);
 
             // draw mesh group 
@@ -367,13 +407,15 @@ namespace PathGenerator.Controller {
             Gl.glPolygonOffset(1.0f, 1.0f);
             Gl.glPolygonMode(Gl.GL_FRONT_AND_BACK, Gl.GL_FILL);
             Gl.glBegin(Gl.GL_TRIANGLES);
-            foreach (var face in Meshgroup) {
+            foreach (var face in Meshgroup)
+            {
                 Gl.glColor3d(0.5, 0.6, 0.6);
                 if (face.groupA)
                     Gl.glColor3ub(40, 40, 40);
                 if (face.groupB)
                     Gl.glColor3ub(210, 210, 210);
-                foreach (var p in face.meshes) {
+                foreach (var p in face.meshes)
+                {
                     Gl.glNormal3f(p.norm.X, p.norm.Y, p.norm.Z);
                     Gl.glVertex3f(p.v1.X, p.v1.Y, p.v1.Z);
                     Gl.glVertex3f(p.v2.X, p.v2.Y, p.v2.Z);
@@ -388,7 +430,8 @@ namespace PathGenerator.Controller {
             Gl.glLineWidth(1);
             Gl.glBegin(Gl.GL_LINES);
             int r = 0, g = 255;
-            foreach (var p in Edge) {
+            foreach (var p in Edge)
+            {
                 Gl.glColor3ub(0, 0, 0);
                 int i = i = 255 / Edge.Count() + 1;
                 r += i;
@@ -401,10 +444,13 @@ namespace PathGenerator.Controller {
             Gl.glEndList();
         }
 
-        public void MakeSortedColorList () {
+        public void MakeSortedColorList()
+        {
             Gl.glNewList(ListNum, Gl.GL_COMPILE);
-            foreach (var face in Meshgroup) {
-                foreach (var p in face.meshes) {
+            foreach (var face in Meshgroup)
+            {
+                foreach (var p in face.meshes)
+                {
                     Gl.glBegin(Gl.GL_TRIANGLES);
                     Gl.glColor3ubv(face.color);
                     Gl.glNormal3f(p.norm.X, p.norm.Y, p.norm.Z);
@@ -417,14 +463,16 @@ namespace PathGenerator.Controller {
             Gl.glEndList();
         }
 
-        public void MakeOriginalListWithoutLine () {
+        public void MakeOriginalListWithoutLine()
+        {
             Gl.glNewList(ListNum, Gl.GL_COMPILE);
 
             // draw mesh
             Gl.glEnable(Gl.GL_POLYGON_OFFSET_FILL);
             Gl.glPolygonOffset(1.0f, 1.0f);
             Gl.glPolygonMode(Gl.GL_FRONT_AND_BACK, Gl.GL_FILL);
-            foreach (var x in STLdata) {
+            foreach (var x in STLdata)
+            {
                 Gl.glBegin(Gl.GL_TRIANGLES);
                 Gl.glNormal3f(x.norm.X, x.norm.Y, x.norm.Z);
                 Gl.glVertex3f(x.v1.X, x.v1.Y, x.v1.Z);
@@ -436,8 +484,10 @@ namespace PathGenerator.Controller {
             Gl.glEndList();
         }
 
-        public void ResetMeshGroup () {
-            foreach (var p in Meshgroup) {
+        public void ResetMeshGroup()
+        {
+            foreach (var p in Meshgroup)
+            {
                 p.groupA = false;
                 p.groupB = false;
             }

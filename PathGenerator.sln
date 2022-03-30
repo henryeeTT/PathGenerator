@@ -1,9 +1,9 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29926.136
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PathGenerator", "Final\PathGenerator.csproj", "{17408E06-FC31-46F7-93B9-F4E6E4735380}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PathGenerator", "PathGenerator\PathGenerator.csproj", "{17408E06-FC31-46F7-93B9-F4E6E4735380}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

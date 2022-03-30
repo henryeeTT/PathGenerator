@@ -14,10 +14,10 @@ namespace PathGenerator.View {
             InitializeComponent();
             GLView.SelectEvent = SelectEvent;
             Workpiece = new STLPathController((int)GlList.Workpiece, (int)GlList.Path);
-            Workpiece.ReadASCIIFile(@"C:\Users\henry.tsai\Desktop\公司\完成\DemoRoom\demo2\demo.stl");
+            //Workpiece.ReadASCIIFile(@"C:\Users\henry.tsai\Desktop\公司\完成\DemoRoom\demo2\demo.stl");
             //Workpiece.ReadBinaryFile("487.stl");
-            Workpiece.SetOriginalPosition();
-            Workpiece.MakeOriginalList();
+            //Workpiece.SetOriginalPosition();
+            //Workpiece.MakeOriginalList();
             btnStatusHandler();
         }
 
